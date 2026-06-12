@@ -241,6 +241,6 @@ O projeto foi criado para aprofundar conhecimentos em Spring Boot, PostgreSQL, J
 
 ## 👨‍💻 Autor
 
-André Felipe da Silva Leal
+André Felipe
 
 Estudante de Análise e Desenvolvimento de Sistemas, desenvolvedor Back-End Java.
