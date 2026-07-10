@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: postgres-clinica
+    environment:
+      POSTGRES_DB: clinica_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+
+  projeto-saude:
+    image: projeto-saude
+    container_name: projeto-saude-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
