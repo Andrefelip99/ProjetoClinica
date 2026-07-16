@@ -3,12 +3,12 @@ package projeto_clinica.com.dto.Response;
 import projeto_clinica.com.model.Funcionario;
 import projeto_clinica.com.model.Perfil;
 
-public record FuncionarioRequestDTO(
+public record FuncionarioResponseDTO(
         Long id,
         String nome,
         Perfil perfil,
         Boolean ativo) {
-    public FuncionarioRequestDTO(Funcionario entity) {
+    public FuncionarioResponseDTO(Funcionario entity) {
         this(
                 entity.getId(),
                 entity.getNome(),

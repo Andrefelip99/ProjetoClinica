@@ -5,8 +5,7 @@ import projeto_clinica.com.model.CadastroInicial;
 public record CadastroInicialResponseDTO(
         Long id,
         String nome,
-        String email,
-        String senha
+        String email
 
 ) {
 
@@ -14,7 +13,6 @@ public record CadastroInicialResponseDTO(
         this(
                 entity.getId(),
                 entity.getNome(),
-                entity.getEmail(),
-                entity.getSenha());
+                entity.getEmail());
     }
 }

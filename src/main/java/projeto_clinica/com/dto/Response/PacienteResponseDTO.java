@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import projeto_clinica.com.model.Paciente;
 
 public record PacienteResponseDTO(
-        long id,
+        Long id,
         String nome,
         Integer idade,
         String cpf,
