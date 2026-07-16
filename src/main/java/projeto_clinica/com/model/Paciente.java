@@ -10,6 +10,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,9 +21,10 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
+@EqualsAndHashCode
 @Table(name = "pacientes")
 public class Paciente {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,7 +34,7 @@ public class Paciente {
     private String nome;
 
     @Column(nullable = false)
-    private int idade;
+    private Integer idade;
 
     @Column(length = 11, nullable = false, unique = true)
     private String cpf;
@@ -48,9 +50,5 @@ public class Paciente {
 
     @OneToMany(mappedBy = "paciente")
     private List<Consulta> consultas;
-
-  
-
-
 
 }
