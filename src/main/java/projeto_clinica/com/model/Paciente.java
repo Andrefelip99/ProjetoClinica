@@ -1,6 +1,10 @@
 package projeto_clinica.com.model;
 
+import java.beans.Transient;
 import java.time.LocalDate;
+import java.time.Period;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +18,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -33,9 +36,6 @@ public class Paciente {
     @Column(nullable = false)
     private String nome;
 
-    @Column(nullable = false)
-    private Integer idade;
-
     @Column(length = 11, nullable = false, unique = true)
     private String cpf;
 
@@ -50,5 +50,14 @@ public class Paciente {
 
     @OneToMany(mappedBy = "paciente")
     private List<Consulta> consultas;
+
+    @Transient
+    public Integer getIdade() {
+        if (dataDeNascimento == null) {
+            return null;
+        }
+
+        return Period.between(dataDeNascimento, LocalDate.now()).getYears();
+    }
 
 }

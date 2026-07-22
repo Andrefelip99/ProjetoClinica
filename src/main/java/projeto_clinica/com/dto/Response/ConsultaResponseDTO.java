@@ -20,7 +20,7 @@ public record ConsultaResponseDTO(
         this(
                 entity.getId(),
                 entity.getDataHora(),
-                entity.getPaciente().getId(),
+                entity.getPaciente() != null ? entity.getPaciente().getId() : null,
                 entity.getMedicoId(),
                 entity.getEnfermeiroId(),
                 entity.getObservacao(),
