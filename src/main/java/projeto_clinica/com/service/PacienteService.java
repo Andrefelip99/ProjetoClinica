@@ -25,6 +25,8 @@ public class PacienteService {
         paciente.setDataDeNascimento(dto.dataDeNascimento());
         paciente.setTelefone(dto.telefone());
         paciente.setEndereco(dto.endereco());
+        paciente.setEmail(dto.email());
+        paciente.setTipoSanguineo(dto.tipoSanguineo());
 
         paciente = pacienteRepository.save(paciente);
 
@@ -48,6 +50,8 @@ public class PacienteService {
             paciente.setDataDeNascimento(dto.dataDeNascimento());
             paciente.setTelefone(dto.telefone());
             paciente.setEndereco(dto.endereco());
+            paciente.setEmail(dto.email());
+            paciente.setTipoSanguineo(dto.tipoSanguineo());
 
             paciente = pacienteRepository.save(paciente);
 

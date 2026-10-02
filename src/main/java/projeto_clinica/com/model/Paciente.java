@@ -51,6 +51,11 @@ public class Paciente {
     @OneToMany(mappedBy = "paciente")
     private List<Consulta> consultas;
 
+    @Column(unique = true)
+    private String email;
+
+    private String tipoSanguineo;
+
     @Transient
     public Integer getIdade() {
         if (dataDeNascimento == null) {

@@ -11,7 +11,9 @@ public record PacienteResponseDTO(
         String cpf,
         LocalDate dataDeNascimento,
         String telefone,
-        String endereco) {
+        String endereco,
+        String email,
+        String tipoSanguineo) {
     public PacienteResponseDTO(Paciente entity) {
         this(
                 entity.getId(),
@@ -20,6 +22,8 @@ public record PacienteResponseDTO(
                 entity.getCpf(),
                 entity.getDataDeNascimento(),
                 entity.getTelefone(),
-                entity.getEndereco());
+                entity.getEndereco(),
+                entity.getEmail(),
+                entity.getTipoSanguineo());
     }
 }
