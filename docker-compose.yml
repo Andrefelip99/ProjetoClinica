@@ -8,11 +8,23 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d clinica_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   projeto-saude:
+    build: .
     image: projeto-saude
     container_name: projeto-saude-api
     ports:
       - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/clinica_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SECURITY_CLIENT_SECRET: ${SECURITY_CLIENT_SECRET:-dev-client-secret}
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy

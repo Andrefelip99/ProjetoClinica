@@ -1,5 +1,7 @@
 package projeto_clinica.com.dto.Response;
 
+import java.time.LocalDateTime;
+
 import projeto_clinica.com.model.Internacao;
 
 public record InternacaoResponseDTO(
@@ -7,8 +9,8 @@ public record InternacaoResponseDTO(
         Long pacienteId,
         Long leitoId,
         String motivo,
-        String dataAlta,
-        String dataEntrada,
+        LocalDateTime dataAlta,
+        LocalDateTime dataEntrada,
         String status) {
 
     public InternacaoResponseDTO(Internacao internacao) {
@@ -16,9 +18,9 @@ public record InternacaoResponseDTO(
                 internacao.getPaciente().getId(),
                 internacao.getLeito().getId(),
                 internacao.getMotivo(),
-                internacao.getDataAlta().toString(),
-                internacao.getDataEntrada().toString(),
-                internacao.getStatus().toString());
+                internacao.getDataAlta(),
+                internacao.getDataEntrada(),
+                internacao.getStatus() != null ? internacao.getStatus().toString() : null);
     }
 
 }

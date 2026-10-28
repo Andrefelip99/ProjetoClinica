@@ -2,7 +2,6 @@ package projeto_clinica.com.model;
 
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,7 +28,6 @@ public class ProntuarioRegistro {
     @Column(nullable = false, updatable = false)
     private LocalDateTime dataHora = LocalDateTime.now();
 
-    @NotBlank
     @Column(nullable = false, length = 4000)
     private String descricao;
 

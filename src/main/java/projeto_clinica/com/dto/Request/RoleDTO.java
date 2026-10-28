@@ -1,10 +1,14 @@
 package projeto_clinica.com.dto.Request;
 
 import projeto_clinica.com.model.Role;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public class RoleDTO {
 
 	private Long id;
+	@NotBlank
+	@Size(max = 80)
 	private String authority;
 	
 	public RoleDTO() {

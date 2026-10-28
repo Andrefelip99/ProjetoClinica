@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import projeto_clinica.com.dto.Request.FuncionarioRequestDTO;
 import projeto_clinica.com.dto.Response.FuncionarioResponseDTO;
@@ -12,6 +13,7 @@ import projeto_clinica.com.service.FuncionarioService;
 import java.util.List;
 
 @RestController
+@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/funcionarios")
 public class FuncionarioController {
 

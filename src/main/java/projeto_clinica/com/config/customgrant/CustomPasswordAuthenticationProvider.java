@@ -53,6 +53,7 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 		this.passwordEncoder = passwordEncoder;
 	}
 	
+	@SuppressWarnings("null")
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		
@@ -69,7 +70,9 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 			throw new OAuth2AuthenticationException("Invalid credentials");
 		}
 
-		if (!passwordEncoder.matches(password, user.getPassword()) || !user.getUsername().equals(username)) {
+		if (!user.isEnabled() || !user.isAccountNonLocked() || !user.isAccountNonExpired()
+				|| !user.isCredentialsNonExpired()
+				|| !passwordEncoder.matches(password, user.getPassword()) || !user.getUsername().equals(username)) {
 			throw new OAuth2AuthenticationException("Invalid credentials");
 		}
 

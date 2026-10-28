@@ -2,8 +2,6 @@ package projeto_clinica.com.controller;
 
 import java.util.List;
 
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,17 +11,23 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
 
+import jakarta.validation.Valid;
 import projeto_clinica.com.dto.Request.ConsultaRequestDTO;
+import projeto_clinica.com.dto.Request.RemarcarConsultaRequestDTO;
 import projeto_clinica.com.dto.Response.ConsultaResponseDTO;
 import projeto_clinica.com.service.ConsultaService;
 
-@AllArgsConstructor
 @RestController
+@PreAuthorize("hasAnyRole('ADMIN', 'MEDICO')")
 @RequestMapping("/consultas")
 public class ConsultaController {
-
     private final ConsultaService consultaService;
+
+    public ConsultaController(ConsultaService consultaService) {
+        this.consultaService = consultaService;
+    }
 
     @PostMapping
     public ResponseEntity<ConsultaResponseDTO> marcarConsulta(
@@ -35,13 +39,9 @@ public class ConsultaController {
     @PutMapping("/{id}/remarcar")
     public ResponseEntity<ConsultaResponseDTO> remarcarConsulta(
             @PathVariable Long id,
-            @Valid @RequestBody ConsultaRequestDTO dto) {
+            @Valid @RequestBody RemarcarConsultaRequestDTO dto) {
 
         ConsultaResponseDTO atualizada = consultaService.remarcarConsulta(id, dto.dataHora());
-
-        if (atualizada == null) {
-            return ResponseEntity.notFound().build();
-        }
 
         return ResponseEntity.ok(atualizada);
     }
@@ -49,9 +49,6 @@ public class ConsultaController {
     @PutMapping("/{id}/cancelar")
     public ResponseEntity<ConsultaResponseDTO> cancelarConsulta(@PathVariable Long id) {
         ConsultaResponseDTO cancelada = consultaService.cancelarConsulta(id);
-        if (cancelada == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(cancelada);
     }
 

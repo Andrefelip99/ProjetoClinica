@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import projeto_clinica.com.model.enums.StatusInternacao;
 
 public record InternacaoRequestDTO(
@@ -11,12 +12,10 @@ public record InternacaoRequestDTO(
         Long pacienteId,
         @NotNull(message = "O ID do leito e obrigatorio")
         Long leitoId,
-        @NotNull(message = "O motivo da internacao e obrigatorio")
+        @NotBlank(message = "O motivo da internacao e obrigatorio")
+        @Size(max = 1000, message = "O motivo nao pode exceder 1000 caracteres")
         String motivo,
-        @NotBlank (message = "A data de alta e obrigatoria")
         LocalDateTime dataAlta,
-        @NotBlank (message = "A data de entrada e obrigatoria")
-        LocalDateTime dataEntrada,
         @NotNull (message = "O status da internacao e obrigatorio")
         StatusInternacao status
 ) {

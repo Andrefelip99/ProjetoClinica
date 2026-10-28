@@ -2,10 +2,11 @@ package projeto_clinica.com.service;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import projeto_clinica.com.dto.Request.FuncionarioRequestDTO;
 import projeto_clinica.com.dto.Response.FuncionarioResponseDTO;
 import projeto_clinica.com.model.Funcionario;
@@ -13,6 +14,7 @@ import projeto_clinica.com.model.Role;
 import projeto_clinica.com.repository.FuncionarioRepository;
 import projeto_clinica.com.repository.RoleRepository;
 import projeto_clinica.com.service.exceptions.ResourceNotFoundException;
+import projeto_clinica.com.service.exceptions.ConflictException;
 
 @Service
 public class FuncionarioService {
@@ -29,9 +31,9 @@ public class FuncionarioService {
     @Transactional
     public FuncionarioResponseDTO criarFuncionario(FuncionarioRequestDTO dto) {
         if (funcionarios.findByEmail(dto.email()).isPresent())
-            throw new IllegalArgumentException("Email ja cadastrado");
+            throw new ConflictException("Email já cadastrado");
         if (funcionarios.existsByCpf(dto.cpf()))
-            throw new IllegalArgumentException("CPF ja cadastrado");
+            throw new ConflictException("CPF já cadastrado");
         List<Role> assigned = roles.findByIdIn(dto.roleIds());
         if (assigned.size() != dto.roleIds().size())
             throw new ResourceNotFoundException("Uma ou mais roles nao foram encontradas");

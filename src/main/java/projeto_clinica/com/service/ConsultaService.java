@@ -12,6 +12,8 @@ import projeto_clinica.com.model.enums.StatusConsulta;
 import projeto_clinica.com.repository.ConsultaRepository;
 import projeto_clinica.com.repository.FuncionarioRepository;
 import projeto_clinica.com.service.exceptions.ResourceNotFoundException;
+import projeto_clinica.com.service.exceptions.BusinessRuleException;
+import projeto_clinica.com.service.exceptions.ConflictException;
 
 @Service
 public class ConsultaService {
@@ -27,12 +29,11 @@ public class ConsultaService {
 
     @Transactional
     public ConsultaResponseDTO marcarConsulta(ConsultaRequestDTO dto) {
-        var paciente = pacientes.buscarPorId(dto.pacienteId())
-                .orElseThrow(() -> new ResourceNotFoundException("Paciente nao encontrado"));
+        var paciente = pacientes.buscarPorId(dto.pacienteId());
         Funcionario medico = funcionarios.findByIdWithRoles(dto.medicoId())
                 .orElseThrow(() -> new ResourceNotFoundException("Medico nao encontrado"));
         boolean isMedico = medico.getRoles().stream().anyMatch(r -> "ROLE_MEDICO".equals(r.getAuthority()));
-        if (!isMedico) throw new IllegalArgumentException("Funcionario nao possui ROLE_MEDICO");
+        if (!isMedico) throw new BusinessRuleException("Funcionário não possui a role de médico.");
         verificarConflito(medico.getId(), dto.dataHora());
 
         Consulta consulta = new Consulta();
@@ -89,12 +90,12 @@ public class ConsultaService {
 
     private void verificarDataConflito(Long medicoId, LocalDateTime dataHora, Long consultaId) {
         if (dataHora == null || !dataHora.isAfter(LocalDateTime.now()))
-            throw new IllegalArgumentException("A consulta deve ter data e hora futuras");
+            throw new BusinessRuleException("A consulta deve ter data e hora futuras.");
         boolean existeConflito = consultaId == null
                 ? consultas.existsByMedico_IdAndDataHoraAndStatusNot(medicoId, dataHora, StatusConsulta.CANCELADA)
                 : consultas.existsByMedico_IdAndDataHoraAndStatusNotAndIdNot(
                         medicoId, dataHora, StatusConsulta.CANCELADA, consultaId);
         if (existeConflito)
-            throw new IllegalArgumentException("O medico ja possui consulta nesse horario");
+            throw new ConflictException("O médico já possui consulta nesse horário.");
     }
 }

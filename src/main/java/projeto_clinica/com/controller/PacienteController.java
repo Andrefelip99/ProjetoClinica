@@ -11,22 +11,27 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import projeto_clinica.com.dto.Request.PacienteRequestDTO;
 import projeto_clinica.com.dto.Response.ConsultaResponseDTO;
 import projeto_clinica.com.dto.Response.PacienteResponseDTO;
 import projeto_clinica.com.service.ConsultaService;
 import projeto_clinica.com.service.PacienteService;
 
-@AllArgsConstructor
 @RestController
+@PreAuthorize("hasAnyRole('ADMIN', 'MEDICO', 'ENFERMEIRO', 'TECNICO_ENFERMAGEM')")
 @RequestMapping("/pacientes")
 public class PacienteController {
 
     private final PacienteService pacienteService;
     private final ConsultaService consultaService;
+
+    public PacienteController(PacienteService pacienteService, ConsultaService consultaService) {
+        this.pacienteService = pacienteService;
+        this.consultaService = consultaService;
+    }
 
     @PostMapping
     public ResponseEntity<PacienteResponseDTO> criarPaciente(
@@ -48,10 +53,7 @@ public class PacienteController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PacienteResponseDTO> buscarPacientePorId(@PathVariable Long id) {
-        return pacienteService.buscarPorId(id)
-                .map(PacienteResponseDTO::new)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(new PacienteResponseDTO(pacienteService.buscarPorId(id)));
     }
 
     @PutMapping("/{id}")
@@ -61,19 +63,13 @@ public class PacienteController {
 
         PacienteResponseDTO response = pacienteService.atualizarPaciente(id, dto);
 
-        if (response == null) {
-            return ResponseEntity.notFound().build();
-        }
-
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}/consultas")
     public ResponseEntity<List<ConsultaResponseDTO>> historicoConsultas(@PathVariable Long id) {
 
-        return pacienteService.buscarPorId(id)
-                .map(paciente -> ResponseEntity.ok(
-                        consultaService.listarConsultasPorPaciente(paciente.getId())))
-                .orElse(ResponseEntity.notFound().build());
+        pacienteService.buscarPorId(id);
+        return ResponseEntity.ok(consultaService.listarConsultasPorPaciente(id));
     }
 }

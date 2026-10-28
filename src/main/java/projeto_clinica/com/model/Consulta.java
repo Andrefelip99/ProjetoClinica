@@ -11,19 +11,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import projeto_clinica.com.model.enums.StatusConsulta;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 @Entity
-@EqualsAndHashCode
 @Table(name = "consultas")
 public class Consulta {
 
@@ -48,5 +44,17 @@ public class Consulta {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusConsulta status;
+
+    public Consulta(Long id, LocalDateTime dataHora, Paciente paciente, Funcionario medico, String observacao,
+            StatusConsulta status) {
+        this.id = id;
+        this.dataHora = dataHora;
+        this.paciente = paciente;
+        this.medico = medico;
+        this.observacao = observacao;
+        this.status = status;
+    }
+
+    
 
 }

@@ -16,8 +16,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,20 +31,15 @@ public class Funcionario implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     @Column(nullable = false, length = 100)
     private String nome;
 
-    @NotBlank
     @Column(nullable = false, unique = true, length = 11)
     private String cpf;
 
-    @Email
-    @NotBlank
     @Column(nullable = false, unique = true, length = 160)
     private String email;
 
-    @NotBlank
     @Column(nullable = false)
     private String senha;
 

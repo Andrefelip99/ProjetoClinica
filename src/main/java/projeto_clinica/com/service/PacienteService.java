@@ -1,21 +1,22 @@
 package projeto_clinica.com.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import lombok.AllArgsConstructor;
 import projeto_clinica.com.dto.Request.PacienteRequestDTO;
 import projeto_clinica.com.dto.Response.PacienteResponseDTO;
 import projeto_clinica.com.model.Paciente;
 import projeto_clinica.com.repository.PacienteRepository;
+import projeto_clinica.com.service.exceptions.ResourceNotFoundException;
 
-@AllArgsConstructor
 @Service
 public class PacienteService {
-
     private final PacienteRepository pacienteRepository;
+
+    public PacienteService(PacienteRepository pacienteRepository) {
+        this.pacienteRepository = pacienteRepository;
+    }
 
     public PacienteResponseDTO criarPaciente(PacienteRequestDTO dto) {
 
@@ -33,8 +34,9 @@ public class PacienteService {
         return new PacienteResponseDTO(paciente);
     }
 
-    public Optional<Paciente> buscarPorId(Long id) {
-        return pacienteRepository.findById(id);
+    public Paciente buscarPorId(Long id) {
+        return pacienteRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado. ID: " + id));
     }
 
     public List<Paciente> listarPacientes() {
@@ -43,21 +45,15 @@ public class PacienteService {
 
     public PacienteResponseDTO atualizarPaciente(Long id, PacienteRequestDTO dto) {
 
-        return pacienteRepository.findById(id).map(paciente -> {
-
-            paciente.setNome(dto.nome());
-            paciente.setCpf(dto.cpf());
-            paciente.setDataDeNascimento(dto.dataDeNascimento());
-            paciente.setTelefone(dto.telefone());
-            paciente.setEndereco(dto.endereco());
-            paciente.setEmail(dto.email());
-            paciente.setTipoSanguineo(dto.tipoSanguineo());
-
-            paciente = pacienteRepository.save(paciente);
-
-            return new PacienteResponseDTO(paciente);
-
-        }).orElse(null);
+        Paciente paciente = buscarPorId(id);
+        paciente.setNome(dto.nome());
+        paciente.setCpf(dto.cpf());
+        paciente.setDataDeNascimento(dto.dataDeNascimento());
+        paciente.setTelefone(dto.telefone());
+        paciente.setEndereco(dto.endereco());
+        paciente.setEmail(dto.email());
+        paciente.setTipoSanguineo(dto.tipoSanguineo());
+        return new PacienteResponseDTO(pacienteRepository.save(paciente));
     }
 
 }

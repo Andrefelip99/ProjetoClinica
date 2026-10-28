@@ -12,11 +12,17 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import projeto_clinica.com.service.exceptions.DatabaseException;
 import projeto_clinica.com.service.exceptions.ForbiddenException;
 import projeto_clinica.com.service.exceptions.ResourceNotFoundException;
+import projeto_clinica.com.service.exceptions.ConflictException;
+import projeto_clinica.com.service.exceptions.BusinessRuleException;
+import projeto_clinica.com.service.exceptions.UnauthorizedException;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {
@@ -35,13 +41,18 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(DatabaseException.class)
     public ResponseEntity<Map<String, Object>> database(DatabaseException e, HttpServletRequest request) {
-        HttpStatus status = HttpStatus.BAD_REQUEST;
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         Map<String, Object> err = new HashMap<>();
         err.put("timestamp", Instant.now());
         err.put("status", status.value());
         err.put("error", e.getMessage());
         err.put("path", request.getRequestURI());
         return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler({ HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class })
+    public ResponseEntity<Map<String, Object>> malformedRequest(Exception e, HttpServletRequest request) {
+        return error(HttpStatus.BAD_REQUEST, "A requisição contém dados inválidos ou malformados.", request);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -76,6 +87,37 @@ public class ControllerExceptionHandler {
         err.put("error", e.getMessage());
         err.put("path", request.getRequestURI());
         return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<Map<String, Object>> conflict(ConflictException e, HttpServletRequest request) {
+        return error(HttpStatus.CONFLICT, e.getMessage(), request);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, Object>> dataConflict(DataIntegrityViolationException e,
+            HttpServletRequest request) {
+        return error(HttpStatus.CONFLICT, "A operação viola uma restrição de dados.", request);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<Map<String, Object>> unauthorized(UnauthorizedException e, HttpServletRequest request) {
+        return error(HttpStatus.UNAUTHORIZED, e.getMessage(), request);
+    }
+
+    @ExceptionHandler({ BusinessRuleException.class, IllegalArgumentException.class })
+    public ResponseEntity<Map<String, Object>> badRequest(RuntimeException e, HttpServletRequest request) {
+        return error(HttpStatus.BAD_REQUEST, e.getMessage(), request);
+    }
+
+    private ResponseEntity<Map<String, Object>> error(HttpStatus status, String message,
+            HttpServletRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", Instant.now());
+        body.put("status", status.value());
+        body.put("error", message);
+        body.put("path", request.getRequestURI());
+        return ResponseEntity.status(status).body(body);
     }
 
 }
